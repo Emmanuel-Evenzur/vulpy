@@ -56,6 +56,26 @@ def password_change(username, password):
     return True
 
 
+def password_reset(username, password):
+
+    conn = sqlite3.connect('db_users.sqlite')
+    c = conn.cursor()
+    c.execute("UPDATE users SET password = ? WHERE username = ?", (password, username))
+    conn.commit()
+    conn.close()
+    return True
+
+
+def delete(username):
+
+    conn = sqlite3.connect('db_users.sqlite')
+    c = conn.cursor()
+    c.execute("DELETE FROM users WHERE username = ?", (username,))
+    conn.commit()
+    conn.close()
+    return True
+
+
 def password_complexity(password):
     return True
 

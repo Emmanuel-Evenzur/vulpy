@@ -82,3 +82,26 @@ def do_chpasswd():
 
     return render_template('user.chpasswd.html')
 
+
+@mod_user.route('/admin/reset/<username>', methods=['POST'])
+def do_reset_password(username):
+    # CWE-306: Missing Authentication for Critical Function.
+    # Account password reset has no login check.
+    password = request.form.get('password')
+    if not password:
+        return 'password required', 400
+
+    libuser.password_reset(username, password)
+    return 'password reset'
+
+
+@mod_user.route('/admin/delete/<username>', methods=['POST'])
+def do_delete_user(username):
+    # CWE-862: Missing Authorization.
+    # Caller must be logged in, but any account may delete any user.
+    if 'username' not in g.session:
+        return redirect('/user/login')
+
+    libuser.delete(username)
+    return 'user deleted'
+
